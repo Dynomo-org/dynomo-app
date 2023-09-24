@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { useMutation } from 'react-query'
 import styled from '@emotion/styled'
 import { blue, blueGrey } from '@mui/material/colors'
 import { Button, Snackbar, TextField, Typography } from '@mui/material'
-import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
 
 import useSnackbarStore from '@store/snackbar'
-
 import authAPI from '@api/auth'
 
 import './App.css'
@@ -103,7 +103,7 @@ const authFormMap = {
   ]
 }
 
-const LoginPage = () => {
+const AuthPage = () => {
   const { register, formState: { errors }, handleSubmit } = useForm()
   const [isModeLogin, setIsModeLogin] = useState(true)
   const showSnackbar = useSnackbarStore(store => store.show)
@@ -166,7 +166,12 @@ function App() {
 
   return (
     <>
-      <LoginPage />
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<p>In development :)</p>} />
+          <Route path='/auth' element={<AuthPage />} />
+        </Routes>
+      </BrowserRouter>
       <Snackbar
         autoCapitalize='true'
         autoHideDuration={1500}

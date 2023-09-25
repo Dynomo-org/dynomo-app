@@ -23,8 +23,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@api/*": ["src/apis/*"],
-      "@store/*": ["src/stores/*"],
     }
   },
   "include": ["src"],

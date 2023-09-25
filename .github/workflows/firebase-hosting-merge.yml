@@ -11,6 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Setting up env file
+        env:
+          VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}
+        run: |
+          echo "VITE_BASE_URL=${VITE_BASE_URL}" > .env.production
       - run: npm install && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

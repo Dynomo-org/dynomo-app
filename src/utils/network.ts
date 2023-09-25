@@ -1,16 +1,16 @@
-import localStorage from "./localstorage"
+import useAuthStore from "@/stores/auth"
 import string from "./string"
 
-const BASE_URL = "http://localhost:5000"
+const BASE_URL = import.meta.env.VITE_BASE_URL
 
 const buildURL = (endpoint: string) => `${BASE_URL}${endpoint}`
 const buildRequestConfig = (config: any) => {
-    let result = {
+    const result = {
         ...config,
         headers: {
         }
     }
-    const token = localStorage.getJSON("_DNM_AUTH")?.token || ""
+    const token = useAuthStore.getState().accessToken
     if (token) {
         result.headers.Authorization = `Bearer ${token}`
     }
@@ -32,13 +32,13 @@ const doRequest = async (endpoint: string, config: any) => {
 }
 
 const network = {
-    get: async (endpoint: string, config: any) => {
+    get: async (endpoint: string, config?: any) => {
         return doRequest(endpoint, config)
     },
-    post: async (endpoint: string, body: any) => {
+    post: async (endpoint: string, body?: any) => {
         return doRequest(endpoint, { method: 'post', body })
     },
-    put: async (endpoint: string, body: any) => {
+    put: async (endpoint: string, body?: any) => {
         return doRequest(endpoint, { method: 'put', body })
     },
     delete: async (endpoint: string) => {

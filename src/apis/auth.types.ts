@@ -1,10 +1,10 @@
 type LoginPayload = {
-    Email: string
-    Password: string
+    email: string
+    password: string
 }
 
 type RegisterPayload = {
-    FullName: string
-    Email: string
-    Password: string
+    full_name: string
+    email: string
+    password: string
 }

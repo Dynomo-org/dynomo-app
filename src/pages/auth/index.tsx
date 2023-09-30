@@ -1,16 +1,17 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from 'react-query'
+import { Navigate, useNavigate } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { blue, blueGrey } from '@mui/material/colors'
-import { Button, TextField, Typography } from '@mui/material'
+import { Button, LinearProgress, TextField, Typography } from '@mui/material'
 
 import useSnackbarStore from '@/stores/snackbar'
 import useAuthStore from '@/stores/auth'
 import authAPI from '@/apis/auth'
+import {AuthResponse} from '@/apis/auth.types'
 
-import config from './index.config'
-import { Navigate, useNavigate } from 'react-router-dom'
+import config from './config'
 
 const Container = styled.div`
     display: flex;
@@ -54,18 +55,16 @@ const ActionText = styled.span`
   `
 
 const AuthPage = () => {
+    // hooks section
     const { register, clearErrors, formState: { errors }, handleSubmit } = useForm()
-
     const [isModeLogin, setIsModeLogin] = useState(true)
-
     const showSnackbar = useSnackbarStore(store => store.show)
     const authState = useAuthStore()
-
     const navigate = useNavigate()
 
     const mutationConfig = {
         onError(error: string) {
-            showSnackbar(error)
+            showSnackbar('error', error)
         },
         onSuccess(data: AuthResponse) {
             authState.setAuth({
@@ -76,16 +75,16 @@ const AuthPage = () => {
             return
         },
     }
-
     const registerMutation = useMutation(authAPI.registerUser, mutationConfig)
     const loginMutation = useMutation(authAPI.loginUser, mutationConfig)
 
-    const onActionTextClick = useCallback(() => {
+    // action handlers section
+    const handleActionTextClick = useCallback(() => {
         clearErrors()
         setIsModeLogin(prev => !prev)
     }, [clearErrors])
 
-    const onAuthFormSubmit = useCallback((data: any) => {
+    const handleAuthFormSubmit = useCallback((data: any) => {
         if (isModeLogin) {
             loginMutation.mutate(data)
             return
@@ -94,6 +93,9 @@ const AuthPage = () => {
         registerMutation.mutate(data)
     }, [isModeLogin, loginMutation, registerMutation])
 
+    const isLoading = useMemo(() => loginMutation.isLoading || registerMutation.isLoading, [registerMutation, loginMutation])
+
+    // renders section
     if (authState.accessToken) {
         return <Navigate to="/" />
     }
@@ -107,7 +109,7 @@ const AuthPage = () => {
         </Column>
         <Column>
             <LoginFormContainer>
-                <LoginForm onSubmit={handleSubmit(onAuthFormSubmit)}>
+                <LoginForm onSubmit={handleSubmit(handleAuthFormSubmit)}>
                     {config.authFormMap[isModeLogin ? 'login' : 'register'].map(item => (
                         <TextField
                             error={!!errors[item.name]}
@@ -117,10 +119,11 @@ const AuthPage = () => {
                             aria-invalid={errors[item.name] ? "true" : "false"}
                         />
                     ))}
+                    {isLoading && <LinearProgress />}
                     <Button type='submit' variant='contained' style={{ marginTop: '2em' }}>{isModeLogin ? 'Login' : 'Daftar'}</Button>
                 </LoginForm>
                 <Typography style={{ marginTop: '1em' }} color={blueGrey[900]} align='center'>
-                    {isModeLogin ? 'Belum punya akun?' : 'Sudah punya akun?'} <ActionText onClick={onActionTextClick}>{isModeLogin ? 'Daftar' : 'Masuk'}</ActionText>
+                    {isModeLogin ? 'Belum punya akun?' : 'Sudah punya akun?'} <ActionText onClick={handleActionTextClick}>{isModeLogin ? 'Daftar' : 'Masuk'}</ActionText>
                 </Typography>
             </LoginFormContainer>
         </Column>

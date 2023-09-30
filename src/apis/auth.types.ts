@@ -1,10 +1,15 @@
-type LoginPayload = {
+export type LoginPayload = {
     email: string
     password: string
 }
 
-type RegisterPayload = {
+export type RegisterPayload = {
     full_name: string
     email: string
     password: string
+}
+
+export type AuthResponse = {
+    token: string
+    id: string
 }

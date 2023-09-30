@@ -8,7 +8,7 @@ const useAuthStore = create<AuthStore>()(
             accessToken: "",
             userID: "",
             setAuth: (state: AuthState) => set(() => ({ ...state })),
-            clearAuth: () => set(() => ({}))
+            clearAuth: () => set(() => ({ accessToken: "", userID: "" }))
         }),
         {
             name: "_DNM_AUTH",

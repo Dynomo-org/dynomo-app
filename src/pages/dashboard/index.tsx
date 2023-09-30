@@ -11,6 +11,7 @@ import appApi from "@/apis/app"
 
 import config from './config'
 import { LoadingButton } from "@mui/lab";
+import { useNavigate } from "react-router-dom";
 
 const DashboardPage = () => {
     // hooks section
@@ -18,6 +19,7 @@ const DashboardPage = () => {
     const { register, clearErrors, getValues, reset, formState: { errors }, handleSubmit } = useForm()
     const showSnackbar = useSnackbarStore(store => store.show)
     const queryClient = useQueryClient()
+    const navigate = useNavigate()
 
     const appList = useQuery(appApi.GET_APP_LIST_KEY, appApi.getAppList, { retry: 1 })
     const createAppMutation = useMutation(appApi.createApp, {
@@ -29,13 +31,13 @@ const DashboardPage = () => {
             setDialogVisible(false)
             reset()
             clearErrors()
-            queryClient.invalidateQueries([appApi.GET_APP_LIST_KEY])
+            queryClient.invalidateQueries({ queryKey: [appApi.GET_APP_LIST_KEY] })
         }
     })
 
     // event handlers section
     const handleRowClick = (id: string) => {
-        console.log(id)
+        navigate(`/app/${id}`)
     }
 
     const handleAddButtonModal = () => setDialogVisible(prev => !prev)

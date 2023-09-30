@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from 'react-query'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { blue, blueGrey } from '@mui/material/colors'
 import { Button, LinearProgress, TextField, Typography } from '@mui/material'
@@ -9,7 +9,7 @@ import { Button, LinearProgress, TextField, Typography } from '@mui/material'
 import useSnackbarStore from '@/stores/snackbar'
 import useAuthStore from '@/stores/auth'
 import authAPI from '@/apis/auth'
-import {AuthResponse} from '@/apis/auth.types'
+import { AuthResponse } from '@/apis/auth.types'
 
 import config from './config'
 
@@ -60,7 +60,6 @@ const AuthPage = () => {
     const [isModeLogin, setIsModeLogin] = useState(true)
     const showSnackbar = useSnackbarStore(store => store.show)
     const authState = useAuthStore()
-    const navigate = useNavigate()
 
     const mutationConfig = {
         onError(error: string) {
@@ -71,7 +70,6 @@ const AuthPage = () => {
                 accessToken: data.token,
                 userID: data.id
             })
-            navigate('/')
             return
         },
     }
@@ -97,7 +95,7 @@ const AuthPage = () => {
 
     // renders section
     if (authState.accessToken) {
-        return <Navigate to="/" />
+        return <Navigate to="/" replace />
     }
 
     return <Container>

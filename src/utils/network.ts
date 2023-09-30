@@ -18,7 +18,7 @@ const buildRequestConfig = (config: any) => {
     return result
 }
 
-const doRequest = async (endpoint: string, config: any) => {
+const doRequest = async <T>(endpoint: string, config: any): Promise<T> => {
     try {
         const response = await fetch(buildURL(endpoint), buildRequestConfig(config))
         const json = await response.json()
@@ -32,10 +32,10 @@ const doRequest = async (endpoint: string, config: any) => {
 }
 
 const network = {
-    get: async (endpoint: string, config?: any) => {
+    get: async  <T>(endpoint: string, config?: any): Promise<T> => {
         return doRequest(endpoint, config)
     },
-    post: async (endpoint: string, body?: any) => {
+    post: async <T>(endpoint: string, body?: any): Promise<T> => {
         return doRequest(endpoint, { method: 'post', body })
     },
     put: async (endpoint: string, body?: any) => {

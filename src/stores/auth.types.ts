@@ -1,9 +1,9 @@
-interface AuthState {
+export interface AuthState {
     accessToken?: string
     userID?: string
 }
 
-interface AuthStore {
+export interface AuthStore {
     accessToken?: string
     userID?: string
     setAuth: (state: AuthState) => void

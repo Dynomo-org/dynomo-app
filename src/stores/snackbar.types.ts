@@ -1,11 +1,13 @@
-type HorizontalType = 'center' | 'left' | 'right'
-type VerticalType = 'top' | 'bottom'
+export type HorizontalType = 'center' | 'left' | 'right'
+export type VerticalType = 'top' | 'bottom'
+export type SnackbarType = 'error' | 'warning' | 'info' | 'success'
 
-interface SnackbarState {
+export interface SnackbarState {
     isOpen: boolean
+    type: SnackbarType
     message: string
     vertical: VerticalType
     horizontal: HorizontalType
-    show: (message: string, vertical?: VerticalType, horizontal?: HorizontalType) => void
+    show: (type: SnackbarType, message: string, vertical?: VerticalType, horizontal?: HorizontalType) => void
     close: () => void
 }

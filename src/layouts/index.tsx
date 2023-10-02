@@ -1,13 +1,15 @@
 import styled from '@emotion/styled'
 import { NotificationsNoneRounded } from "@mui/icons-material"
-import { AppBar, Box, Container, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material"
+import { AppBar, Box, Button, Container, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material"
 import { grey, orange } from "@mui/material/colors"
-import { Outlet } from "react-router-dom"
+import { Outlet, useNavigate } from "react-router-dom"
 
 import logo from '@/assets/logo.png'
 import InternalLink from "@/components/internal-link"
 
 import config from './index.config'
+import useAuthStore from '@/stores/auth'
+import { useCallback } from 'react'
 
 const MainAppBar = styled(AppBar)`
     padding: 0 1em;
@@ -24,6 +26,14 @@ const AppLogo = styled.img`
 `
 
 const MainLayout = () => {
+    const logout = useAuthStore(state => state.clearAuth)
+    const navigate = useNavigate()
+
+    const handleLogout = useCallback(() => {
+        logout()
+        navigate('/auth', { replace: true })
+    }, [logout, navigate])
+
     return <>
         <Box sx={{ display: 'flex' }}>
             <MainAppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -35,6 +45,7 @@ const MainLayout = () => {
                     </Typography>
                     <Box sx={{ flexGrow: 1 }} />
                     <NotificationsNoneRounded style={{ color: `${orange[700]}` }} />
+                    <Button onClick={handleLogout} sx={{ color: orange[700], cursor: 'pointer', mx: 3 }} variant='text'>Log out</Button>
                 </Toolbar>
             </MainAppBar>
             <Drawer

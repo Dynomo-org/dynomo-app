@@ -13,6 +13,7 @@ import useSnackbarStore from '@/stores/snackbar'
 const Layout = loadable(() => import('@/layouts'))
 const AuthPage = loadable(() => import('@/pages/auth'))
 const DashboardPage = loadable(() => import('@/pages/dashboard'))
+const AppMainPage = loadable(() => import('@/pages/app-main'))
 
 const ProtectedRoute = () => {
   const auth = useAuthStore()
@@ -42,6 +43,7 @@ const App = () => {
           <Route path='/' element={<ProtectedRoute />} >
             <Route element={<Layout />} >
               <Route index element={<DashboardPage />} />
+              <Route path='/app/:id' element={<AppMainPage />} />
             </Route>
           </Route>
           <Route path='/auth' element={<AuthPage />} />
@@ -49,13 +51,12 @@ const App = () => {
         </Routes>
       </BrowserRouter>
       <Snackbar
-        autoCapitalize='true'
         anchorOrigin={{ vertical: snackbar.vertical, horizontal: snackbar.horizontal }}
         autoHideDuration={1500}
         open={snackbar.isOpen}
         onClose={snackbar.close}
       >
-        <Alert onClose={snackbar.close} severity={snackbar.type} sx={{ width: '100%' }}>
+        <Alert autoCapitalize='true' onClose={snackbar.close} severity={snackbar.type} sx={{ width: '100%' }}>
           {snackbar.message}
         </Alert>
       </Snackbar>

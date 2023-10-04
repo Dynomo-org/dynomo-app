@@ -1,5 +1,5 @@
 export type QueryParam = {
-    id: string
+    app_id: string
 }
 
 export type AppFormType = 'strings' | 'styles' 

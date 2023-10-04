@@ -1,29 +1,30 @@
+import { useEffect, useMemo } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
+import { grey } from "@mui/material/colors"
+import { Backdrop, Box, Card, CardContent, CircularProgress, TextField, Typography } from "@mui/material"
+import { useForm } from "react-hook-form"
+import { LoadingButton } from "@mui/lab"
 
 import appApi from '@/apis/app'
 import Form from "@/components/form"
-import { Backdrop, Box, Card, CardContent, CircularProgress, TextField, Typography } from "@mui/material"
-import { grey } from "@mui/material/colors"
-import { useEffect, useMemo } from "react"
-import { useForm } from "react-hook-form"
-import { AppFormType, QueryParam } from "./types"
-import { LoadingButton } from "@mui/lab"
 import { App } from "@/apis/app.types"
 import useSnackbarStore from "@/stores/snackbar"
+import { AppFormType, QueryParam } from "./types"
 
 const AppMainPage = () => {
     // hooks section
-    const { id } = useParams<QueryParam>()
+    const { app_id } = useParams<QueryParam>()
     const appDetail = useQuery({
-        queryKey: [appApi.GET_APP_DETAIL_KEY, id],
-        queryFn: () => appApi.getAppDetail(id || "")
+        queryKey: [appApi.GET_APP_DETAIL_KEY, app_id],
+        queryFn: () => appApi.getAppDetail(app_id || "")
     }), { data } = appDetail
     const snackbar = useSnackbarStore()
     const queryClient = useQueryClient()
     const appUpdate = useMutation(appApi.updateApp, {
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [appApi.GET_APP_DETAIL_KEY, id] })
+            queryClient.invalidateQueries({ queryKey: [appApi.GET_APP_DETAIL_KEY, app_id] })
+            snackbar.show('success', "Field Updated!")
         },
         onError: (error: string) => {
             snackbar.show('error', error)
@@ -81,9 +82,12 @@ const AppMainPage = () => {
     }
 
     return <>
-        <Box>
-            <Typography variant="h4">{data?.name}</Typography>
-            <Typography variant="subtitle1" color={grey[500]}>{data?.package_name}</Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <img src={data?.icon_url} width={60} height={60} />
+            <Box sx={{ ml: 3 }}>
+                <Typography variant="h4">{data?.name}</Typography>
+                <Typography variant="subtitle1" color={grey[500]}>{data?.package_name}</Typography>
+            </Box>
         </Box>
         <Card sx={{ mt: 3 }}>
             <CardContent>

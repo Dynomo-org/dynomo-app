@@ -11,9 +11,17 @@ import useSnackbarStore from '@/stores/snackbar'
 
 // import for pages
 const Layout = loadable(() => import('@/layouts'))
-const AuthPage = loadable(() => import('@/pages/auth'))
+
 const DashboardPage = loadable(() => import('@/pages/dashboard'))
-const AppMainPage = loadable(() => import('@/pages/app-main'))
+const KeystorePage = loadable(() => import('@/pages/keystore'))
+const AuthPage = loadable(() => import('@/pages/auth'))
+
+// app pages
+const AppBuildPage = loadable(() => import('@/pages/app/build'))
+const AppMainPage = loadable(() => import('@/pages/app/main'))
+
+// admin pages
+const AdminPage = loadable(() => import('@/pages/admin'))
 
 const ProtectedRoute = () => {
   const auth = useAuthStore()
@@ -43,7 +51,11 @@ const App = () => {
           <Route path='/' element={<ProtectedRoute />} >
             <Route element={<Layout />} >
               <Route index element={<DashboardPage />} />
-              <Route path='/app/:id' element={<AppMainPage />} />
+              <Route path='/keystore' element={<KeystorePage />} />
+              <Route path='/admin' element={<AdminPage />} />
+              <Route path='/app/:app_id' element={<AppMainPage />} />
+              <Route path='/app/:app_id/ads' element={<h1>ads</h1>} />
+              <Route path='/app/:app_id/build' element={<AppBuildPage />} />
             </Route>
           </Route>
           <Route path='/auth' element={<AuthPage />} />

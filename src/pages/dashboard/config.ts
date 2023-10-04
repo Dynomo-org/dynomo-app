@@ -1,20 +1,4 @@
 import { FormItemProps } from "@/components/form/types"
-import { App } from "./types"
-
-const dummyData: App[] = [
-    {
-        id: '1213',
-        img: 'https://github.com/Dynomo-org/master-storage-1/blob/main/assets/default-icon.png?raw=true',
-        package_name: "com.example.example",
-        name: "Example App"
-    },
-    {
-        id: '12123',
-        img: 'https://github.com/Dynomo-org/master-storage-1/blob/main/assets/default-icon.png?raw=true',
-        package_name: "com.example.example",
-        name: "Example App"
-    },
-]
 
 const addAppForm: FormItemProps[] = [
     {
@@ -39,6 +23,5 @@ const addAppForm: FormItemProps[] = [
 ]
 
 export default {
-    addAppForm,
-    dummyData
+    addAppForm
 }

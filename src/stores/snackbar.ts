@@ -18,7 +18,7 @@ const useSnackbarStore = create<SnackbarState>()(set => ({
             vertical: vertical || "bottom",
             horizontal: horizontal || "center"
         })),
-    close: () => set(() => ({ isOpen: false, type: undefined }))
+    close: () => set(() => ({ isOpen: false }))
 }))
 
 export default useSnackbarStore

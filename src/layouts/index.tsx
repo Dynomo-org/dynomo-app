@@ -2,14 +2,15 @@ import styled from '@emotion/styled'
 import { NotificationsNoneRounded } from "@mui/icons-material"
 import { AppBar, Box, Button, Container, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material"
 import { grey, orange } from "@mui/material/colors"
-import { Outlet, useNavigate } from "react-router-dom"
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom"
 
 import logo from '@/assets/logo.png'
 import InternalLink from "@/components/internal-link"
 
-import config from './index.config'
+import config from './config'
 import useAuthStore from '@/stores/auth'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
+import { QueryParam } from './types'
 
 const MainAppBar = styled(AppBar)`
     padding: 0 1em;
@@ -28,6 +29,16 @@ const AppLogo = styled.img`
 const MainLayout = () => {
     const logout = useAuthStore(state => state.clearAuth)
     const navigate = useNavigate()
+    const { pathname } = useLocation()
+    const param = useParams<Partial<QueryParam>>()
+
+    const menu = useMemo(() => {
+        if (pathname.startsWith("/app")) {
+            return config.menu["app"]
+        }
+
+        return config.menu["main"]
+    }, [pathname])
 
     const handleLogout = useCallback(() => {
         logout()
@@ -38,11 +49,15 @@ const MainLayout = () => {
         <Box sx={{ display: 'flex' }}>
             <MainAppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                 <Toolbar disableGutters>
-                    <AppLogo src={logo} />
-                    <Typography
-                        variant="h6" noWrap component="a" href="/" color={orange[700]}>
-                        Dynomo
-                    </Typography>
+                    <InternalLink to="/">
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <AppLogo src={logo} />
+                            <Typography
+                                variant="h6" noWrap color={orange[700]}>
+                                Dynomo
+                            </Typography>
+                        </Box>
+                    </InternalLink>
                     <Box sx={{ flexGrow: 1 }} />
                     <NotificationsNoneRounded style={{ color: `${orange[700]}` }} />
                     <Button onClick={handleLogout} sx={{ color: orange[700], cursor: 'pointer', mx: 3 }} variant='text'>Log out</Button>
@@ -62,10 +77,10 @@ const MainLayout = () => {
                 <Toolbar />
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
-                        {config.menu.map(menu => (
-                            <InternalLink key={menu.title} to={menu.href}>
+                        {menu.map(menu => (
+                            <InternalLink key={menu.title} to={menu.getHref(param)}>
                                 <ListItem>
-                                    <ListItemButton sx={{ borderRadius: '.5em' }}>
+                                    <ListItemButton selected={pathname == menu.getHref(param)} sx={{ borderRadius: '.5em' }}>
                                         <ListItemIcon>
                                             <menu.icon style={{ color: `${orange[700]}` }} />
                                         </ListItemIcon>

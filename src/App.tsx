@@ -12,9 +12,10 @@ import useSnackbarStore from '@/stores/snackbar'
 // import for pages
 const Layout = loadable(() => import('@/layouts'))
 
-const DashboardPage = loadable(() => import('@/pages/dashboard'))
-const KeystorePage = loadable(() => import('@/pages/keystore'))
 const AuthPage = loadable(() => import('@/pages/auth'))
+const BuildPage = loadable(() => import('@/pages/build'))
+const KeystorePage = loadable(() => import('@/pages/keystore'))
+const DashboardPage = loadable(() => import('@/pages/dashboard'))
 
 // app pages
 const AppBuildPage = loadable(() => import('@/pages/app/build'))
@@ -51,8 +52,9 @@ const App = () => {
           <Route path='/' element={<ProtectedRoute />} >
             <Route element={<Layout />} >
               <Route index element={<DashboardPage />} />
-              <Route path='/keystore' element={<KeystorePage />} />
               <Route path='/admin' element={<AdminPage />} />
+              <Route path='/keystore' element={<KeystorePage />} />
+              <Route path='/build' element={<BuildPage />} />
               <Route path='/app/:app_id' element={<AppMainPage />} />
               <Route path='/app/:app_id/ads' element={<h1>ads</h1>} />
               <Route path='/app/:app_id/build' element={<AppBuildPage />} />

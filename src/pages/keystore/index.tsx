@@ -1,17 +1,18 @@
-import AddIcon from '@mui/icons-material/Add'
+import { useCallback, useEffect, useMemo, useState } from "react"
+import dayjs from "dayjs"
+import { Error } from "@mui/icons-material"
+import DoneIcon from '@mui/icons-material/Done';
+import AddIcon from '@mui/icons-material/Add';
 import { LoadingButton } from "@mui/lab"
 import { Box, Button, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material"
-import { useCallback, useState } from "react"
 import { useForm } from "react-hook-form"
-import { useMutation, useQuery, useQueryClient } from "react-query"
+import { UseQueryOptions, useMutation, useQueries, useQuery, useQueryClient } from "react-query"
 
 import keystoreApi from "@/apis/keystore"
-import { Keystore } from "@/apis/keystore.types"
+import { BuildStatus, Keystore } from "@/apis/keystore.types"
 import Dialog from "@/components/dialog"
 import Form from "@/components/form"
 import useSnackbarStore from "@/stores/snackbar"
-import { DownloadForOffline, Error } from "@mui/icons-material"
-import dayjs from "dayjs"
 import config from './config'
 
 const renderKeystoreStatus = (data: Keystore) => {
@@ -20,10 +21,10 @@ const renderKeystoreStatus = (data: Keystore) => {
     }
 
     let Icon = Error
-    let tooltip = "Generate Keystore Failed"
+    let tooltip = "Generate Failed"
     if (data.build_status == 1) {
-        Icon = DownloadForOffline
-        tooltip = "Download Keystore"
+        Icon = DoneIcon
+        tooltip = "Ready to Use"
     }
 
     return (
@@ -40,6 +41,21 @@ const KeystorePage = () => {
     const queryClient = useQueryClient()
 
     const keystoreList = useQuery(keystoreApi.GET_KEYSTORE_LIST_KEY, keystoreApi.getKeystoreList)
+    const unfinishedKeystore = useMemo<string[]>(() => {
+        if (!keystoreList.isSuccess) return []
+
+        // filter the status, exclude keystore with status 1 (finished) and 2 (failed)
+        return keystoreList.data?.keystores.filter(key => ![1, 2].includes(key.build_status)).map(key => key.id)
+    }, [keystoreList])
+
+    const buildStatuses = useQueries(unfinishedKeystore.map<UseQueryOptions<BuildStatus, Error>>((key) => {
+        return {
+            queryFn: () => keystoreApi.getBuildKeystoreStatus(key),
+            queryKey: [keystoreApi.GET_BUILD_KEYSTORE_STATUS_KEY, key],
+            refetchInterval: 3000
+        }
+    }))
+
     const createKeystoreMutation = useMutation(keystoreApi.createKeystore, {
         onError: (error: string) => {
             showSnackbar('error', error)
@@ -63,6 +79,15 @@ const KeystorePage = () => {
     const handleCreateKeystoreSubmit = useCallback((data: any) => {
         createKeystoreMutation.mutate(data)
     }, [createKeystoreMutation])
+
+    // handle build status changes by observing the value of buildStatuses
+    // if there is buildStatuses 1 (finished) then we trigger refetch the table
+    useEffect(() => {
+        const finishedKeystore = buildStatuses.filter(status => [1,2].includes(status.data?.status || 0))
+        if (finishedKeystore.length > 0) {
+            keystoreList.refetch()
+        }
+    }, [buildStatuses, keystoreList])
 
     return (
         <>

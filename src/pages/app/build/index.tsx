@@ -1,18 +1,27 @@
-import appApi from '@/apis/app'
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import { grey } from "@mui/material/colors"
 import { useState } from 'react'
 import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
-import { QueryParam } from "./types"
+
 import useSnackbarStore from '@/stores/snackbar'
+import appApi from '@/apis/app'
+import artifactApi from "@/apis/artifact"
+import keystoreApi from "@/apis/keystore"
+import { QueryParam } from "./types"
+import dayjs from "dayjs"
 
 const AppBuildPage = () => {
     // hooks section
     const [keystore, setKeystore] = useState<string>("")
 
-    const snackbar = useSnackbarStore()
     const { app_id } = useParams<QueryParam>()
+    const snackbar = useSnackbarStore()
+    const keystoreList = useQuery(keystoreApi.GET_BUILD_KEYSTORE_LIST_KEY, keystoreApi.getBuildKeystoreList)
+    const artifactList = useQuery({
+        queryKey: [artifactApi.GET_APP_ARTIFACT_LIST_KEY, app_id],
+        queryFn: () => artifactApi.getArtifactsListByAppID(app_id || "")
+    })
     const appDetail = useQuery({
         queryKey: [appApi.GET_APP_DETAIL_KEY, app_id],
         queryFn: () => appApi.getAppDetail(app_id || "")
@@ -46,9 +55,9 @@ const AppBuildPage = () => {
                             label="Keystore" value={keystore}
                             onChange={handleSelectKeystore}
                         >
-                            <MenuItem value="10">Ten</MenuItem>
-                            <MenuItem value="20">Twenty</MenuItem>
-                            <MenuItem value="30">Thirty</MenuItem>
+                            {keystoreList.data?.keystores.map(data => (
+                                <MenuItem key={data.id} value={data.id}>{data.alias}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     <Button variant='contained' sx={{ mt: 2, width: '100%' }} onClick={handleSubmitBuild}>Build</Button>
@@ -56,6 +65,27 @@ const AppBuildPage = () => {
             </Box>
         </Box>
         <Typography variant="h5" sx={{ mt: 6, mb: 4 }}>Build History</Typography>
+        <TableContainer component={Paper} sx={{ display: 'flex', justifyContent: 'center' }}>
+            {artifactList.isLoading ? <CircularProgress sx={{ margin: 3 }} /> : (
+                <Table sx={{ width: '100%' }}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>File Name</TableCell>
+                            <TableCell>Build Date</TableCell>
+                            <TableCell />
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {artifactList.data?.artifacts.map(d => (
+                            <TableRow key={d.id}>
+                                <TableCell>{d.artifact_name}</TableCell>
+                                <TableCell>{dayjs(d.created_at).utc().format("DD-MMM-YYYY HH:mm")}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            )}
+        </TableContainer>
     </>
 }
 

@@ -10,7 +10,8 @@ export interface FormItemProps {
     helperText?: string
     placeholder?: string
     validation?: {
-        required: boolean
+        required?: boolean
         pattern?: RegExp
+        minLength?: number
     }
 }

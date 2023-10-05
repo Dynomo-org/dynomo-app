@@ -8,6 +8,14 @@ export type CreateKeystoreRequest = {
     store_password: string
 }
 
+export type BuildStatus = {
+    status: number
+}
+
+export type GetKeystoreListParam = {
+    build_status: string
+}
+
 export type Keystore = {
     id: string
     name: string

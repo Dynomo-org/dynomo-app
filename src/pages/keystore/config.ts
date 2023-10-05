@@ -51,18 +51,22 @@ const addKeystoreForm: FormItemProps[] = [
         name: "key_password",
         label: "Key Password",
         type: "password",
-        helperText: "Key password can not be empty",
+        helperText: "Key password must be at least 6 digit numbers",
         validation: {
             required: true,
+            minLength: 6,
+            pattern: /^\d+$/i,
         }
     },
     {
         name: "store_password",
         label: "Store Password",
         type: "password",
-        helperText: "Store password can not be empty",
+        helperText: "Store must be at least 6 digit numbers",
         validation: {
             required: true,
+            minLength: 6,
+            pattern: /^\d+$/i,
         }
     },
 ]

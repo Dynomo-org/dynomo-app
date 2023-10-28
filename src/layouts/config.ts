@@ -6,6 +6,7 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import BuildIcon from '@mui/icons-material/Build';
 import InfoIcon from '@mui/icons-material/Info';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import DeveloperModeIcon from '@mui/icons-material/DeveloperMode';
 
 import { MenuMap } from './types';
 
@@ -57,6 +58,23 @@ const menu: MenuMap = {
             title: "Build",
             getHref: (param) => `/app/${param?.app_id}/build`,
             icon: BuildIcon,
+        },
+    ],
+    admin: [
+        {
+            title: "Dashboard",
+            getHref: () => "/",
+            icon: HomeIcon
+        },
+        {
+            title: "Admin",
+            getHref: () => "/admin",
+            icon: AdminPanelSettingsIcon
+        },
+        {
+            title: "Templates",
+            getHref: () => "/admin/template",
+            icon: DeveloperModeIcon
         },
     ]
 }

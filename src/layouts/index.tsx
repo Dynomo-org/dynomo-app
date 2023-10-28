@@ -37,6 +37,10 @@ const MainLayout = () => {
             return config.menu["app"]
         }
 
+        if (pathname.startsWith("/admin")){
+            return config.menu["admin"]
+        }
+
         return config.menu["main"]
     }, [pathname])
 

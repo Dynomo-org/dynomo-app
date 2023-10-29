@@ -1,5 +1,5 @@
 export interface FormProps {
-    onSubmit: () => void
+    onSubmit?: () => void
     children: any
 }
 
@@ -7,6 +7,7 @@ export interface FormItemProps {
     name: string
     label: string
     type: "text" | "password"
+    multiline?: boolean
     helperText?: string
     placeholder?: string
     validation?: {

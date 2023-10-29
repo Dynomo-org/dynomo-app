@@ -15,10 +15,7 @@ import { AppFormType, QueryParam } from "./types"
 const AppMainPage = () => {
     // hooks section
     const { app_id } = useParams<QueryParam>()
-    const appDetail = useQuery({
-        queryKey: [appApi.GET_APP_DETAIL_KEY, app_id],
-        queryFn: () => appApi.getAppDetail(app_id || "")
-    }), { data } = appDetail
+    const appDetail = useQuery([appApi.GET_APP_DETAIL_KEY, app_id], () => appApi.getAppDetail(app_id || "")), { data } = appDetail
     const snackbar = useSnackbarStore()
     const queryClient = useQueryClient()
     const appUpdate = useMutation(appApi.updateApp, {

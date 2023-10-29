@@ -22,7 +22,9 @@ const AppBuildPage = loadable(() => import('@/pages/app/build'))
 const AppMainPage = loadable(() => import('@/pages/app/main'))
 
 // admin pages
-const AdminPage = loadable(() => import('@/pages/admin'))
+const AdminPage = loadable(() => import('@/pages/admin/main'))
+const AdminTemplatePage = loadable(() => import('@/pages/admin/template'))
+const AdminTemplateDetailPage = loadable(() => import('@/pages/admin/template/detail'))
 
 const ProtectedRoute = () => {
   const auth = useAuthStore()
@@ -52,12 +54,16 @@ const App = () => {
           <Route path='/' element={<ProtectedRoute />} >
             <Route element={<Layout />} >
               <Route index element={<DashboardPage />} />
-              <Route path='/admin' element={<AdminPage />} />
               <Route path='/keystore' element={<KeystorePage />} />
               <Route path='/build' element={<BuildPage />} />
+
               <Route path='/app/:app_id' element={<AppMainPage />} />
               <Route path='/app/:app_id/ads' element={<h1>ads</h1>} />
               <Route path='/app/:app_id/build' element={<AppBuildPage />} />
+
+              <Route path='/admin' element={<AdminPage />} />
+              <Route path='/admin/template' element={<AdminTemplatePage />} />
+              <Route path='/admin/template/:template_id' element={<AdminTemplateDetailPage />} />
             </Route>
           </Route>
           <Route path='/auth' element={<AuthPage />} />

@@ -1,11 +1,14 @@
 import { Box, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
-import { useQuery } from "react-query"
+import { useQuery } from "@tanstack/react-query"
 
 import artifactApi from "@/apis/artifact"
 import dayjs from "dayjs"
 
 const BuildPage = () => {
-    const artifactList = useQuery(artifactApi.GET_USER_ARTIFACT_LIST_KEY, artifactApi.getArtifactsListByOwnerID)
+    const artifactList = useQuery({
+        queryKey: [artifactApi.GET_USER_ARTIFACT_LIST_KEY],
+        queryFn: artifactApi.getArtifactsListByOwnerID,
+    })
 
     return (
         <>

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { Box, Button, Card, CardContent, Fab, TextField, Typography } from "@mui/material"
 import { useParams } from "react-router-dom"
 import { useForm } from "react-hook-form"
-import { useMutation, useQuery, useQueryClient } from "react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import AddIcon from '@mui/icons-material/Add';
 
 import templateApi from "@/apis/template"
@@ -12,15 +12,17 @@ import useSnackbarStore from "@/stores/snackbar"
 
 const TemplateDetailPage = () => {
     const { template_id } = useParams<QueryParam>()
-    const queryClient = useQueryClient()
     const snackbar = useSnackbarStore()
-    const templateInfo = useQuery(
-        [templateApi.GET_TEMPLATE_INFO_KEY, template_id],
-        () => templateApi.getTemplateByID(template_id || "")
-    )
-    const templateMutation = useMutation(templateApi.editTemplate, {
+
+    // queries and mutations
+    const templateInfo = useQuery({
+        queryKey: [templateApi.GET_TEMPLATE_INFO_KEY, template_id],
+        queryFn: () => templateApi.getTemplateByID(template_id || "")
+    })
+    const templateMutation = useMutation({
+        mutationFn: templateApi.editTemplate,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [templateApi, template_id] })
+            templateInfo.refetch()
             snackbar.show("success", "Template updated")
             hasAlreadyFetched.current = false
         }

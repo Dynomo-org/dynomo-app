@@ -1,7 +1,7 @@
 import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import { grey } from "@mui/material/colors"
 import { useState } from 'react'
-import { useQuery } from "react-query"
+import { useQuery } from "@tanstack/react-query"
 import { useParams } from "react-router-dom"
 
 import useSnackbarStore from '@/stores/snackbar'
@@ -17,7 +17,12 @@ const AppBuildPage = () => {
 
     const { app_id } = useParams<QueryParam>()
     const snackbar = useSnackbarStore()
-    const keystoreList = useQuery(keystoreApi.GET_BUILD_KEYSTORE_LIST_KEY, keystoreApi.getBuildKeystoreList)
+
+    // queries
+    const keystoreList = useQuery({
+        queryKey: [keystoreApi.GET_BUILD_KEYSTORE_LIST_KEY],
+        queryFn: keystoreApi.getBuildKeystoreList,
+    })
     const artifactList = useQuery({
         queryKey: [artifactApi.GET_APP_ARTIFACT_LIST_KEY, app_id],
         queryFn: () => artifactApi.getArtifactsListByAppID(app_id || "")

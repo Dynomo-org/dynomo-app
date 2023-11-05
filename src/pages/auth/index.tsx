@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { Navigate } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { blue, blueGrey } from '@mui/material/colors'
@@ -73,8 +73,8 @@ const AuthPage = () => {
             return
         },
     }
-    const registerMutation = useMutation(authAPI.registerUser, mutationConfig)
-    const loginMutation = useMutation(authAPI.loginUser, mutationConfig)
+    const registerMutation = useMutation({ mutationFn: authAPI.registerUser, ...mutationConfig })
+    const loginMutation = useMutation({ mutationFn: authAPI.loginUser, ...mutationConfig })
 
     // action handlers section
     const handleActionTextClick = useCallback(() => {
@@ -91,7 +91,7 @@ const AuthPage = () => {
         registerMutation.mutate(data)
     }, [isModeLogin, loginMutation, registerMutation])
 
-    const isLoading = useMemo(() => loginMutation.isLoading || registerMutation.isLoading, [registerMutation, loginMutation])
+    const isLoading = useMemo(() => loginMutation.isPending || registerMutation.isPending, [registerMutation, loginMutation])
 
     // renders section
     if (authState.accessToken) {

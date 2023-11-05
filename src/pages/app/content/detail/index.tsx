@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import SaveIcon from '@mui/icons-material/Save';
 import { useParams } from 'react-router-dom';
 import contentApi from '@/apis/content'
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import useSnackbarStore from '@/stores/snackbar';
 import { QueryParam } from './types';
@@ -19,12 +19,16 @@ const AppContentDetailPage = () => {
     const [editorRef, setEditorRef] = useState<any>()
     const snackbar = useSnackbarStore()
 
-    const queryClient = useQueryClient()
-    const contentDetail = useQuery([contentApi.GET_CONTENT_DETAIL, content_id], () => contentApi.getContentDetail(content_id || ""))
-    const contentMutation = useMutation(contentApi.updateContent, {
+    // queries and mutations 
+    const contentDetail = useQuery({
+        queryKey: [contentApi.GET_CONTENT_DETAIL, content_id],
+        queryFn: () => contentApi.getContentDetail(content_id || ""),
+    })
+    const contentMutation = useMutation({
+        mutationFn: contentApi.updateContent,
         onSuccess: () => {
+            contentDetail.refetch()
             snackbar.show("success", "Content Updated")
-            queryClient.invalidateQueries([contentApi.GET_CONTENT_DETAIL, content_id])
         }
     })
 

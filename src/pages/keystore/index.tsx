@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { LoadingButton } from "@mui/lab"
 import { Box, Button, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material"
 import { useForm } from "react-hook-form"
-import { UseQueryOptions, useMutation, useQueries, useQuery, useQueryClient } from "react-query"
+import { UseQueryOptions, useMutation, useQueries, useQuery } from "@tanstack/react-query"
 
 import keystoreApi from "@/apis/keystore"
 import { BuildStatus, Keystore } from "@/apis/keystore.types"
@@ -38,9 +38,12 @@ const KeystorePage = () => {
     const [dialogVisible, setDialogVisible] = useState(false)
     const { register, clearErrors, getValues, reset, formState: { errors }, handleSubmit } = useForm()
     const showSnackbar = useSnackbarStore(store => store.show)
-    const queryClient = useQueryClient()
 
-    const keystoreList = useQuery(keystoreApi.GET_KEYSTORE_LIST_KEY, keystoreApi.getKeystoreList)
+    // queries and mutations    
+    const keystoreList = useQuery({
+        queryKey: [keystoreApi.GET_KEYSTORE_LIST_KEY],
+        queryFn: keystoreApi.getKeystoreList,
+    })
     const unfinishedKeystore = useMemo<string[]>(() => {
         if (!keystoreList.isSuccess) return []
 
@@ -48,24 +51,24 @@ const KeystorePage = () => {
         return keystoreList.data?.keystores.filter(key => ![1, 2].includes(key.build_status)).map(key => key.id)
     }, [keystoreList])
 
-    const buildStatuses = useQueries(unfinishedKeystore.map<UseQueryOptions<BuildStatus, Error>>((key) => {
-        return {
-            queryFn: () => keystoreApi.getBuildKeystoreStatus(key),
-            queryKey: [keystoreApi.GET_BUILD_KEYSTORE_STATUS_KEY, key],
-            refetchInterval: 3000
-        }
-    }))
+    const buildStatuses = useQueries({
+        queries: unfinishedKeystore.map<UseQueryOptions<BuildStatus, Error>>((key) => {
+            return {
+                queryFn: () => keystoreApi.getBuildKeystoreStatus(key),
+                queryKey: [keystoreApi.GET_BUILD_KEYSTORE_STATUS_KEY, key],
+                refetchInterval: 3000
+            }
+        })
+    })
 
-    const createKeystoreMutation = useMutation(keystoreApi.createKeystore, {
-        onError: (error: string) => {
-            showSnackbar('error', error)
-        },
+    const createKeystoreMutation = useMutation({
+        mutationFn: keystoreApi.createKeystore,
         onSuccess: () => {
+            keystoreList.refetch()
             showSnackbar('success', `${getValues('keystore_name')} is going to be created!`)
             setDialogVisible(false)
-            reset()
             clearErrors()
-            queryClient.invalidateQueries({ queryKey: [keystoreApi.GET_KEYSTORE_LIST_KEY] })
+            reset()
         }
     })
 
@@ -83,7 +86,7 @@ const KeystorePage = () => {
     // handle build status changes by observing the value of buildStatuses
     // if there is buildStatuses 1 (finished) then we trigger refetch the table
     useEffect(() => {
-        const finishedKeystore = buildStatuses.filter(status => [1,2].includes(status.data?.status || 0))
+        const finishedKeystore = buildStatuses.filter(status => [1, 2].includes(status.data?.status || 0))
         if (finishedKeystore.length > 0) {
             keystoreList.refetch()
         }
@@ -107,7 +110,7 @@ const KeystorePage = () => {
                     />)}
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <LoadingButton
-                            loading={createKeystoreMutation.isLoading}
+                            loading={createKeystoreMutation.isPending}
                             startIcon={<AddIcon />}
                             type="submit"
                             variant="contained">

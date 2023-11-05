@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useMutation, useQuery, useQueryClient } from "react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useParams } from "react-router-dom"
 import { grey } from "@mui/material/colors"
 import { Backdrop, Box, Card, CardContent, CircularProgress, TextField, Typography } from "@mui/material"
@@ -15,16 +15,18 @@ import { AppFormType, QueryParam } from "./types"
 const AppMainPage = () => {
     // hooks section
     const { app_id } = useParams<QueryParam>()
-    const appDetail = useQuery([appApi.GET_APP_DETAIL_KEY, app_id], () => appApi.getAppDetail(app_id || "")), { data } = appDetail
     const snackbar = useSnackbarStore()
-    const queryClient = useQueryClient()
-    const appUpdate = useMutation(appApi.updateApp, {
+
+    // queries and mutations
+    const appDetail = useQuery({
+        queryKey: [appApi.GET_APP_DETAIL_KEY, app_id],
+        queryFn: () => appApi.getAppDetail(app_id || ""),
+    }), { data } = appDetail
+    const appUpdate = useMutation({
+        mutationFn: appApi.updateApp,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [appApi.GET_APP_DETAIL_KEY, app_id] })
+            appDetail.refetch()
             snackbar.show('success', "Field Updated!")
-        },
-        onError: (error: string) => {
-            snackbar.show('error', error)
         }
     })
 

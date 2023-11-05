@@ -8,7 +8,7 @@ import templateApi from "@/apis/template";
 import Dialog from "@/components/dialog";
 import Form from "@/components/form";
 import dayjs from 'dayjs';
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import config from "./config";
 import useSnackbarStore from '@/stores/snackbar';
 import { useNavigate } from 'react-router-dom';
@@ -19,18 +19,22 @@ const AdminTemplatePage = () => {
 
     const showSnackbar = useSnackbarStore(store => store.show)
     const navigate = useNavigate()
-    const queryClient = useQueryClient()
     const { register, clearErrors, getValues, reset, formState: { errors }, handleSubmit } = useForm()
-    const templateList = useQuery(templateApi.GET_TEMPLATE_LIST_KEY, templateApi.getTemplateList)
-    const templateMutation = useMutation(templateApi.createTemplate, {
+
+    // queries and mutations
+    const templateList = useQuery({
+        queryKey: [templateApi.GET_TEMPLATE_LIST_KEY],
+        queryFn: templateApi.getTemplateList
+    })
+    const templateMutation = useMutation({
+        mutationFn: templateApi.createTemplate,
         onSuccess: () => {
-            queryClient.invalidateQueries(templateApi.GET_TEMPLATE_LIST_KEY)
+            templateList.refetch()
             showSnackbar('success', `${getValues("name")} is successfully created`)
             handleDialogClose()
         }
     })
 
-    // queries and mutations
     const handleAddTemplate = (data: any) => {
         templateMutation.mutate(data)
     }
@@ -64,7 +68,7 @@ const AdminTemplatePage = () => {
                     />)}
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <LoadingButton
-                            loading={templateMutation.isLoading}
+                            loading={templateMutation.isPending}
                             startIcon={<AddIcon />}
                             type="submit"
                             variant="contained">

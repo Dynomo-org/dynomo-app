@@ -2,8 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools'
 import { ThemeProvider, createTheme } from '@mui/material';
 import { orange } from '@mui/material/colors';
 import dayjs from 'dayjs';
@@ -31,16 +29,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 getAnalytics(app)
 
-// Initialize query client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false
-    }
-  },
-})
-
 // Initialize theme
 const theme = createTheme({
   palette: {
@@ -56,11 +44,8 @@ dayjs.extend(utc)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <App />
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
   </React.StrictMode>,
 )

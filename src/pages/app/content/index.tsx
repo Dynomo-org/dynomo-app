@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react"
 import { Box, Button, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material"
 import { useForm } from "react-hook-form"
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import AddIcon from '@mui/icons-material/Add';
 
 import contentApi from "@/apis/content"
@@ -20,24 +20,22 @@ const AppContentPage = () => {
     const [dialogVisible, setDialogVisible] = useState(false)
     const { register, clearErrors, getValues, reset, formState: { errors }, handleSubmit } = useForm()
     const showSnackbar = useSnackbarStore(store => store.show)
-    const queryClient = useQueryClient()
     const navigate = useNavigate()
 
+    // queries and mutations
     const contentList = useQuery({
         queryKey: [contentApi.GET_CONTENT_LIST_KEY, app_id],
         queryFn: () => contentApi.getContents(app_id || ""),
         retry: 1,
     })
-    const createContentMutation = useMutation(contentApi.createContent, {
-        onError: (error: string) => {
-            showSnackbar('error', error)
-        },
+    const createContentMutation = useMutation({
+        mutationFn: contentApi.createContent,
         onSuccess: () => {
+            contentList.refetch()
             showSnackbar('success', `${getValues('title')} Created Successfully`)
             setDialogVisible(false)
             reset()
             clearErrors()
-            queryClient.invalidateQueries({ queryKey: [contentApi.GET_CONTENT_LIST_KEY, app_id] })
         }
     })
 
@@ -77,7 +75,7 @@ const AppContentPage = () => {
                 />)}
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <LoadingButton
-                        loading={createContentMutation.isLoading}
+                        loading={createContentMutation.isPending}
                         startIcon={<AddIcon />}
                         type="submit"
                         variant="contained">

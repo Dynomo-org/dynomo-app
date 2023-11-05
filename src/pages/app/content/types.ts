@@ -1,3 +1,3 @@
 export type QueryParam = {
-    content_id: string
+    app_id: string
 }

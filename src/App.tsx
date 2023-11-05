@@ -19,10 +19,12 @@ const DashboardPage = loadable(() => import('@/pages/dashboard'))
 
 // app pages
 const AppBuildPage = loadable(() => import('@/pages/app/build'))
-const AppMainPage = loadable(() => import('@/pages/app/main'))
+const AppContentPage = loadable(() => import('@/pages/app/content'))
+const AppContentDetailPage = loadable(() => import('@/pages/app/content/detail'))
+const AppMainPage = loadable(() => import('@/pages/app'))
 
 // admin pages
-const AdminPage = loadable(() => import('@/pages/admin/main'))
+const AdminPage = loadable(() => import('@/pages/admin'))
 const AdminTemplatePage = loadable(() => import('@/pages/admin/template'))
 const AdminTemplateDetailPage = loadable(() => import('@/pages/admin/template/detail'))
 
@@ -60,6 +62,8 @@ const App = () => {
               <Route path='/app/:app_id' element={<AppMainPage />} />
               <Route path='/app/:app_id/ads' element={<h1>ads</h1>} />
               <Route path='/app/:app_id/build' element={<AppBuildPage />} />
+              <Route path='/app/:app_id/content' element={<AppContentPage />} />
+              <Route path='/app/:app_id/content/:content_id' element={<AppContentDetailPage />} />
 
               <Route path='/admin' element={<AdminPage />} />
               <Route path='/admin/template' element={<AdminTemplatePage />} />

@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import SaveIcon from '@mui/icons-material/Save';
 import { useParams } from 'react-router-dom';
 import contentApi from '@/apis/content'
-
-import { QueryParam } from '../types';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+
 import useSnackbarStore from '@/stores/snackbar';
+import { QueryParam } from './types';
 
 const imagePlaceholder = "data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
 

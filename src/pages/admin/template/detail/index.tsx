@@ -14,7 +14,10 @@ const TemplateDetailPage = () => {
     const { template_id } = useParams<QueryParam>()
     const queryClient = useQueryClient()
     const snackbar = useSnackbarStore()
-    const templateInfo = useQuery([templateApi, template_id], () => templateApi.getTemplateByID(template_id || ""))
+    const templateInfo = useQuery(
+        [templateApi.GET_TEMPLATE_INFO_KEY, template_id],
+        () => templateApi.getTemplateByID(template_id || "")
+    )
     const templateMutation = useMutation(templateApi.editTemplate, {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [templateApi, template_id] })
@@ -86,8 +89,8 @@ const TemplateDetailPage = () => {
             <CardContent>
                 <Typography variant="h6">Template Info</Typography>
                 <Form>
-                    <TextField {...templateForm.register('name')} label="Template Name" />
-                    <TextField {...templateForm.register('repository_url')} label="Repository URL" />
+                    <TextField InputLabelProps={{ shrink: true }} {...templateForm.register('name')} label="Template Name" />
+                    <TextField InputLabelProps={{ shrink: true }} {...templateForm.register('repository_url')} label="Repository URL" />
                 </Form>
             </CardContent>
         </Card>

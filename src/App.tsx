@@ -20,6 +20,7 @@ const KeystorePage = loadable(() => import('@/pages/keystore'))
 const DashboardPage = loadable(() => import('@/pages/dashboard'))
 
 // app pages
+const AppMonetizationPage = loadable(() => import('@/pages/app/monetization'))
 const AppBuildPage = loadable(() => import('@/pages/app/build'))
 const AppContentPage = loadable(() => import('@/pages/app/content'))
 const AppContentDetailPage = loadable(() => import('@/pages/app/content/detail'))
@@ -83,7 +84,7 @@ const App = () => {
                 <Route path='/build' element={<BuildPage />} />
 
                 <Route path='/app/:app_id' element={<AppMainPage />} />
-                <Route path='/app/:app_id/ads' element={<h1>ads</h1>} />
+                <Route path='/app/:app_id/ads' element={<AppMonetizationPage />} />
                 <Route path='/app/:app_id/build' element={<AppBuildPage />} />
                 <Route path='/app/:app_id/content' element={<AppContentPage />} />
                 <Route path='/app/:app_id/content/:content_id' element={<AppContentDetailPage />} />

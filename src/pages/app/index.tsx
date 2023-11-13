@@ -7,8 +7,8 @@ import { useForm } from "react-hook-form"
 import { LoadingButton } from "@mui/lab"
 
 import appApi from '@/apis/app'
-import Form from "@/components/form"
 import { App } from "@/apis/app.types"
+import Form from "@/components/form"
 import useSnackbarStore from "@/stores/snackbar"
 import { AppFormType, QueryParam } from "./types"
 
@@ -31,6 +31,7 @@ const AppMainPage = () => {
     })
 
     const appInfoForm = useForm()
+    const appManifestForm = useForm()
     const appStringsForm = useForm()
     const appStylesForm = useForm()
 
@@ -41,6 +42,13 @@ const AppMainPage = () => {
             version_code: data?.version_code,
             icon_url: data?.icon_url,
             privacy_policy_link: data?.privacy_policy_link,
+        }
+    }, [data])
+
+    const appManifestSegment = useMemo(() => {
+        return {
+            admob_app_id: data?.admob_app_id,
+            app_lovin_sdk_key: data?.app_lovin_sdk_key
         }
     }, [data])
 
@@ -62,6 +70,10 @@ const AppMainPage = () => {
     useEffect(() => {
         appInfoForm.reset(appInfoSegment)
     }, [data, appInfoForm, appInfoSegment])
+
+    useEffect(() => {
+        appManifestForm.reset(appManifestSegment)
+    }, [data, appManifestForm, appManifestSegment])
 
     useEffect(() => {
         appStringsForm.reset(data?.strings)
@@ -96,6 +108,25 @@ const AppMainPage = () => {
                         <TextField key={key} label={key} {...appInfoForm.register(key)} />
                     ))}
                     {appInfoForm.formState.isDirty && (
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <LoadingButton
+                                type="submit"
+                                variant="contained">
+                                Update
+                            </LoadingButton>
+                        </Box>
+                    )}
+                </Form>
+            </CardContent>
+        </Card>
+        <Card sx={{ mt: 3 }}>
+            <CardContent>
+                <Typography variant="h6">App Manifest Info</Typography>
+                <Form onSubmit={appManifestForm.handleSubmit(data => handleAppUpdate(data))}>
+                    {Object.keys(appManifestSegment).map(key => (
+                        <TextField key={key} label={key} {...appManifestForm.register(key)} />
+                    ))}
+                    {appManifestForm.formState.isDirty && (
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <LoadingButton
                                 type="submit"

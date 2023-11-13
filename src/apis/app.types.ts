@@ -17,12 +17,12 @@ export type App = {
     privacy_policy_link: string
     strings: any // JSON Object
     styles: any // JSON Object
-    enable_open: string
-    enable_banner: string
-    enable_interstitial: string
-    enable_native: string
-    enable_reward: string
-    interstitial_interval_second: string
+    enable_open: boolean
+    enable_banner: boolean
+    enable_interstitial: boolean
+    enable_native: boolean
+    enable_reward: boolean
+    interstitial_interval_second: number
     created_at: string
     updated_at: string
 }
